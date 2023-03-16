@@ -8,7 +8,10 @@ module HDF5_Dataset_m
 
 
   type, extends(HDF5_Leaf), public :: HDF5_Dataset
+    integer(hid_t) :: type_id
     integer :: rank
+    integer(hsize_t), allocatable :: chunks(:)
+    integer(hsize_t), allocatable :: max_dims(:)
 
     contains
       procedure :: attach => node_attach
@@ -22,9 +25,14 @@ module HDF5_Dataset_m
       class(HDF5_Dataset), intent(inout) :: this
       class(HDF5_Node), pointer :: child
 
+      integer :: r
+
       select type(child)
       class is ( Buffer )
-        this%dims = [child%dims, H5S_UNLIMITED_F]
+        r = size(child%dims)
+        this%rank = r+1
+        this%max_dims = [child%dims, H5S_UNLIMITED_F]
+        this%chunks = [integer(hsize_t) :: this%max_dims(1:r), child%t_max]
       end select
 
       if(.not. allocated(this%children)) then

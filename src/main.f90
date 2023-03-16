@@ -1,4 +1,5 @@
 program main
+  use hdf5, only: H5T_NATIVE_DOUBLE
   use HDF5_AbstractTypes_m, only: HDF5_Node
   use HDF5_File_m, only: HDF5_File
   use HDF5_Group_m, only: HDF5_Group
@@ -23,28 +24,29 @@ program main
   integer :: ier
 
 
-  allocate(HDF5_File :: h5_file)
+  allocate(HDF5_File  :: h5_file)
   allocate(HDF5_Group :: h5_grp)
-  allocate(Compress :: comp1)
-  allocate(Compress :: comp2)
-  allocate(SVD :: svd1)
+  allocate(Compress   :: comp1)
+  allocate(Compress   :: comp2)
+  allocate(SVD        :: svd1)
 
 
-  ! Initialize buffer
+  ! Create pointers to callback functions
   append_ptr => append
   size_q_ptr => size_q
 
 
-  call h5_file%init("./", "foo.h5")
+  call h5_file%create("./", "foo.h5")
 
   ptr => h5_file
-  h5_grp%nm = "Group Data"
+  h5_grp%nm = "G1"
   call h5_grp%attach_to(ptr)
 
   !comp 1 + provider
   ptr => h5_grp
   comp1%nm = "Comp1"
   comp1%settings = "H5Z_compression"
+  comp1%type_id = H5T_NATIVE_DOUBLE
   call comp1%attach_to(ptr)
 
   ! init and add buf 1
@@ -58,6 +60,7 @@ program main
   ptr => h5_grp
   comp2%nm = "Comp2"
   comp2%settings = "H5Z_compression"
+  comp2%type_id = H5T_NATIVE_DOUBLE
   call comp2%attach_to(ptr)
 
   ! init and add buf 2
@@ -88,13 +91,13 @@ program main
   call buf1%append()
   call buf1%append()
   call buf1%append()
-  call buf1%append()
-  call buf1%append()
-  call buf1%append()
-  call buf1%append()
-  call buf1%append()
-  call buf1%append()
-  call buf1%append()
+  ! call buf1%append()
+  ! call buf1%append()
+  ! call buf1%append()
+  ! call buf1%append()
+  ! call buf1%append()
+  ! call buf1%append()
+  ! call buf1%append()
 
 
 

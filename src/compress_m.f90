@@ -8,8 +8,6 @@ module Compress_m
 
   type, extends(HDF5_Dataset), public :: Compress
     character(len=:), allocatable :: settings
-    integer(hsize_t), allocatable :: chunks(:)
-    integer(hsize_t), allocatable :: max_dims(:)
 
     contains
       procedure :: flush_upstream
@@ -27,7 +25,7 @@ module Compress_m
       class(Compress), intent(inout) :: this
       real(8) :: buf(..)
 
-      integer(hid_t) :: loc_id, type_id, s_id, ms_id, ds_id, cp_id
+      integer(hid_t) :: loc_id, s_id, ms_id, ds_id, cp_id
       integer :: ierr
       logical :: exists = .false.
 
@@ -39,10 +37,7 @@ module Compress_m
 
       buf_rank = rank(buf)
       buf_dims = shape(buf)
-      this%max_dims = [buf_dims(1:buf_rank-1), H5S_UNLIMITED_F]
-      this%chunks   = [int(buf_dims(1:buf_rank-1), 4), 100]
 
-      type_id = H5T_NATIVE_REAL
       call this%parent%loc_id_open(loc_id, ierr)
 
       call h5lexists_f(loc_id, this%nm, exists, ierr)
@@ -68,7 +63,7 @@ module Compress_m
         call h5screate_simple_f(buf_rank, buf_dims, s_id, ierr, this%max_dims)
         call check("h5screate_simple_f", ierr)
 
-        call h5dcreate_f(loc_id, this%nm, type_id, s_id, ds_id, &
+        call h5dcreate_f(loc_id, this%nm, this%type_id, s_id, ds_id, &
           ierr, dcpl_id=cp_id)
         call check("h5dcreate_f", ierr)
       end if

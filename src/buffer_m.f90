@@ -8,7 +8,8 @@ module Buffer_m
     class(HDF5_Leaf), pointer :: parent_recv => NULL()
 
     integer(hsize_t), allocatable :: dims(:)
-    integer, private :: m, t_max ! size of buffer
+    integer :: t_max
+    integer, private :: m ! size of buffer
     integer, private :: t ! current position in buffer
 
     ! field names in buffer

@@ -16,7 +16,7 @@ module HDF5_File_m
       procedure :: loc_id_open => node_loc_id_open
       procedure :: loc_id_close => node_loc_id_close
 
-      procedure :: init => hdf5_file_init
+      procedure :: create => hdf5_file_create
       procedure :: check_tree => hdf5_file_check_tree
   end type
 
@@ -76,7 +76,7 @@ module HDF5_File_m
     !=================
     ! HDF5_File Functions
     !
-    subroutine hdf5_file_init(this, path, nm)
+    subroutine hdf5_file_create(this, path, nm)
       class(HDF5_File), intent(out) :: this
       character(len=*), intent(in) :: path, nm
 
